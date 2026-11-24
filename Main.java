@@ -2,62 +2,64 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-//Creates Menu Screen
 public class Main extends JFrame implements ActionListener{
     public static void main(String[] args) {
         new Main();
     }
 
-    JPanel menuOption;
-    JLabel title;
-    JButton vsBot;
-    JButton vsPlayer;
+    public final int MENU_SCREEN = 0;
+    public final int CHOOSE_NAME_SCREEN = 1;
+    public final int RPS_SELECT_SCREEN = 2;
+    public final int MESSAGE_SCREEN = 3;
+    public final int RESULT_SCREEN = 4;
 
-    JCheckBox unlimitedGames;
-    private static boolean isUnlimited = false;
+    GameData gameData = new GameData();
+
+    MenuScreen menuScreen = new MenuScreen(this);
+    MessageScreen messageScreen = new MessageScreen(this, gameData);
+    RPSSelectScreen rpsSelectScreen = new RPSSelectScreen(this, gameData, messageScreen);
+    ResultScreen resultScreen = new ResultScreen(this, gameData);
+    ChooseNameScreen chooseNameScreen = new ChooseNameScreen(this, gameData, rpsSelectScreen);
 
     public Main(){
-        setLayout(new BorderLayout());
-        menuOption = new JPanel(new GridLayout (0, 1));
-        add(menuOption);
+        setTitle("RPS GAME 2.0");
+        setLayout(new FlowLayout());
 
-        title = new JLabel("Rock Paper Scissor the Game");
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        add(title, BorderLayout.NORTH);
+        menuScreen.setVisible(false);
+        add(menuScreen);
+        chooseNameScreen.setVisible(false);
+        add(chooseNameScreen);
+        rpsSelectScreen.setVisible(false);
+        add(rpsSelectScreen);
+        messageScreen.setVisible(false);
+        add(messageScreen);
+        resultScreen.setVisible(false);
+        add(resultScreen);
 
-        unlimitedGames = new JCheckBox("Unlimited Rounds");
-        unlimitedGames.addActionListener(this);
-        menuOption.add(unlimitedGames);
-        
-        vsBot = new JButton("VS BOT");
-        vsBot.addActionListener(this);
-        menuOption.add(vsBot);
+        showScreen(MENU_SCREEN);
 
-        vsPlayer = new JButton("VS PLAYER");
-        vsPlayer.addActionListener(this);
-        menuOption.add(vsPlayer);
-        
-        
-        setBounds(0, 0, 500, 500);
+        setBounds(500, 0, 1200, 960);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e){
-        if(e.getSource() == unlimitedGames){
-            isUnlimited = unlimitedGames.isSelected();
-        }
-
-        if(e.getSource() == vsBot){
-            new VsBot();
-            dispose();
-        } else if (e.getSource() == vsPlayer){
-
+    public void showScreen(int screen){
+        menuScreen.setVisible(false);
+        chooseNameScreen.setVisible(false);
+        rpsSelectScreen.setVisible(false);
+        messageScreen.setVisible(false);
+        resultScreen.setVisible(false);
+        switch(screen){
+            case MENU_SCREEN -> menuScreen.setVisible(true);
+            case CHOOSE_NAME_SCREEN -> chooseNameScreen.setVisible(true);
+            case RPS_SELECT_SCREEN -> rpsSelectScreen.setVisible(true);
+            case MESSAGE_SCREEN -> messageScreen.setVisible(true);
+            case RESULT_SCREEN -> resultScreen.setVisible(true);
         }
     }
 
-    public static boolean getIsUnlimited(){
-        return isUnlimited;
+    @Override
+    public void actionPerformed(ActionEvent e){
+
     }
 }
